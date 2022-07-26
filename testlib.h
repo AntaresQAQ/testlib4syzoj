@@ -473,14 +473,14 @@ static void __testlib_set_binary(std::FILE *file) {
         setmode(fileno(file), O_BINARY);
 #   endif
 #else
-    if (file == stdin) {
-        if (!freopen(NULL, "rb", file))
-            __testlib_fail("Unable to freopen stdin");
-    }
-    if (file == stdout || file == stderr) {
-        if (!freopen(NULL, "wb", file))
-            __testlib_fail("Unable to freopen stdout/stderr");
-    }
+//    if (file == stdin) {
+//        if (!freopen(NULL, "rb", file))
+//            __testlib_fail("Unable to freopen stdin");
+//    }
+//    if (file == stdout || file == stderr) {
+//        if (!freopen(NULL, "wb", file))
+//            __testlib_fail("Unable to freopen stdout/stderr");
+//    }
 #endif
     }
 }
@@ -2862,7 +2862,7 @@ void InStream::reset(std::FILE *file) {
 
     if (NULL != file) {
         opened = true;
-        // __testlib_set_binary(file);
+        __testlib_set_binary(file);
 
         if (stdfile)
             reader = new FileInputStreamReader(file, name);
@@ -4085,7 +4085,7 @@ void registerGen(int argc, char *argv[], int randomGeneratorVersion) {
     __testlib_ensuresPreconditions();
 
     testlibMode = _generator;
-    // __testlib_set_binary(stdin);
+    __testlib_set_binary(stdin);
     rnd.setSeed(argc, argv);
 
 #if __cplusplus > 199711L || defined(_MSC_VER)
@@ -4128,7 +4128,7 @@ void registerInteraction(int argc, char *argv[]) {
     __testlib_ensuresPreconditions();
 
     testlibMode = _interactor;
-    // __testlib_set_binary(stdin);
+    __testlib_set_binary(stdin);
 /*
     if (argc > 1 && !strcmp("--help", argv[1]))
         __testlib_help();
@@ -4193,7 +4193,7 @@ void registerValidation() {
     __testlib_ensuresPreconditions();
 
     testlibMode = _validator;
-    // __testlib_set_binary(stdin);
+    __testlib_set_binary(stdin);
 
     inf.init(stdin, _input);
     inf.strict = true;
@@ -4279,7 +4279,7 @@ void registerTestlibCmd(int argc, char *argv[]) {
     __testlib_ensuresPreconditions();
 
     testlibMode = _checker;
-    // __testlib_set_binary(stdin);
+    __testlib_set_binary(stdin);
 
     std::vector<std::string> args(1, argv[0]);
     checker.initialize();
