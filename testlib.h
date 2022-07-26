@@ -2862,7 +2862,7 @@ void InStream::reset(std::FILE *file) {
 
     if (NULL != file) {
         opened = true;
-        __testlib_set_binary(file);
+        // __testlib_set_binary(file);
 
         if (stdfile)
             reader = new FileInputStreamReader(file, name);
@@ -4085,7 +4085,7 @@ void registerGen(int argc, char *argv[], int randomGeneratorVersion) {
     __testlib_ensuresPreconditions();
 
     testlibMode = _generator;
-    __testlib_set_binary(stdin);
+    // __testlib_set_binary(stdin);
     rnd.setSeed(argc, argv);
 
 #if __cplusplus > 199711L || defined(_MSC_VER)
@@ -4193,7 +4193,7 @@ void registerValidation() {
     __testlib_ensuresPreconditions();
 
     testlibMode = _validator;
-    __testlib_set_binary(stdin);
+    // __testlib_set_binary(stdin);
 
     inf.init(stdin, _input);
     inf.strict = true;
