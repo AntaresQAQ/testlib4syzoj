@@ -7,3 +7,4 @@
 # Test Files
 run-test.cpp
 CMakeLists.txt
+/cmake-build-debug/
