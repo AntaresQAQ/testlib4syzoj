@@ -2134,6 +2134,7 @@ InStream ouf;
 InStream ans;
 bool appesMode;
 std::string resultName;
+std::string scoreName;
 std::string checkerName = "untitled checker";
 random_t rnd;
 TTestlibMode testlibMode = _unknown;
@@ -2738,6 +2739,35 @@ NORETURN void InStream::quit(TResult result, const char *msg) {
 
     quitscr(LightGray, __testlib_toPrintableMessage(message).c_str());
     std::fprintf(stderr, "\n");
+
+    FILE *scoreFile;
+    if(scoreName != "") {
+        scoreFile = std::fopen(scoreName.c_str(), "w");
+        if(scoreFile == NULL) {
+            scoreName = "";
+            quit(_fail, "Can not write to the score file");
+        }
+    } else {
+        scoreFile = stdout;
+    }
+
+    if (result != _points)
+        std::fprintf(scoreFile, "%d\n", result == _ok ? 100 : 0);
+    else
+    {
+        if (__testlib_points == std::numeric_limits<float>::infinity()) {
+            quit(_fail, "Expected points, but infinity found");
+        }
+        std::string stringPoints = removeDoubleTrailingZeroes(format("%.10f", __testlib_points));
+        std::fprintf(scoreFile, "%s\n", stringPoints.c_str());
+    }
+
+    if(scoreName != "") {
+        if(scoreFile == NULL || fclose(scoreFile) != 0) {
+            scoreName = "";
+            quit(_fail, "Can not write to the score file");
+        }
+    }
 
     inf.close();
     ouf.close();
@@ -4099,7 +4129,7 @@ void registerInteraction(int argc, char *argv[]) {
 
     testlibMode = _interactor;
     __testlib_set_binary(stdin);
-
+/*
     if (argc > 1 && !strcmp("--help", argv[1]))
         __testlib_help();
 
@@ -4143,6 +4173,20 @@ void registerInteraction(int argc, char *argv[]) {
         ans.init(argv[3], _answer);
     else
         ans.name = "unopened answer stream";
+    */
+
+    // For syzoj interaction, we should read data input from file "input"
+    // and read user output from stdout
+    // and read test data answer from file "answer"
+    inf.init("input", _input);
+    ouf.init(stdin, _output);
+    ans.init("answer", _answer);
+
+    // For syzoj, we should write score into file "score.txt"
+    // and write message into stderr
+    appesMode = false;
+    scoreName = "score.txt";
+    resultName = ""; // message will be written into stderr if resultName is ""
 }
 
 void registerValidation() {
@@ -4239,7 +4283,8 @@ void registerTestlibCmd(int argc, char *argv[]) {
 
     std::vector<std::string> args(1, argv[0]);
     checker.initialize();
-    
+
+    /*
     for (int i = 1; i < argc; i++) {
         if (!strcmp("--testset", argv[i])) {
             if (i + 1 < argc && strlen(argv[i + 1]) > 0)
@@ -4288,6 +4333,20 @@ void registerTestlibCmd(int argc, char *argv[]) {
     inf.init(args[1], _input);
     ouf.init(args[2], _output);
     ans.init(args[3], _answer);
+     */
+
+    // For syzoj SPJ, we should read data input from file "input"
+    // and read user output from file "user_out"
+    // and read test data answer from file "answer"
+    inf.init("input", _input);
+    ouf.init("user_out", _output);
+    ans.init("answer", _answer);
+
+    // For syzoj, we should write score into stdout
+    // and write message into stderr
+    appesMode = false;
+    scoreName = ""; // score will be written into stdout if scoreName is ""
+    resultName = ""; // message will be written into stderr if resultName is ""
 }
 
 void registerTestlib(int argc, ...) {
