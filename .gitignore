@@ -3,3 +3,7 @@
 *.exe
 *.o
 *.obj
+
+# Test Files
+run-test.cpp
+CMakeLists.txt
