@@ -4128,7 +4128,7 @@ void registerInteraction(int argc, char *argv[]) {
     __testlib_ensuresPreconditions();
 
     testlibMode = _interactor;
-    __testlib_set_binary(stdin);
+    // __testlib_set_binary(stdin);
 /*
     if (argc > 1 && !strcmp("--help", argv[1]))
         __testlib_help();
@@ -4176,7 +4176,7 @@ void registerInteraction(int argc, char *argv[]) {
     */
 
     // For syzoj interaction, we should read data input from file "input"
-    // and read user output from stdout
+    // and read user output from stdin
     // and read test data answer from file "answer"
     inf.init("input", _input);
     ouf.init(stdin, _output);
@@ -4279,7 +4279,7 @@ void registerTestlibCmd(int argc, char *argv[]) {
     __testlib_ensuresPreconditions();
 
     testlibMode = _checker;
-    __testlib_set_binary(stdin);
+    // __testlib_set_binary(stdin);
 
     std::vector<std::string> args(1, argv[0]);
     checker.initialize();
