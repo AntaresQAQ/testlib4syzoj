@@ -464,16 +464,27 @@ inline double doubleDelta(double expected, double result) {
         return absolute;
 }
 
-static void __testlib_set_binary(std::FILE *file) {
-    if (NULL != file) {
+#ifndef O_BINARY
+static void __testlib_set_binary(
+#ifdef __GNUC__
+    __attribute__((unused)) 
+#endif
+    std::FILE* file
+)
+#else
+static void __testlib_set_binary(std::FILE* file)
+#endif
+{
 #ifdef O_BINARY
-#   ifdef _MSC_VER
+    if (NULL != file)
+    {
+#ifndef __BORLANDC__
         _setmode(_fileno(file), O_BINARY);
-#   else
+#else
         setmode(fileno(file), O_BINARY);
-#   endif
 #endif
     }
+#endif
 }
 
 #if __cplusplus > 199711L || defined(_MSC_VER)
@@ -4166,18 +4177,18 @@ void registerInteraction(int argc, char *argv[]) {
         ans.name = "unopened answer stream";
     */
 
+    // For syzoj, we should write score into file "score.txt"
+    // and write message into stderr
+    appesMode = false;
+    scoreName = "score.txt";
+    resultName = ""; // message will be written into stderr if resultName is ""
+
     // For syzoj interaction, we should read data input from file "input"
     // and read user output from stdin
     // and read test data answer from file "answer"
     inf.init("input", _input);
     ouf.init(stdin, _output);
     ans.init("answer", _answer);
-
-    // For syzoj, we should write score into file "score.txt"
-    // and write message into stderr
-    appesMode = false;
-    scoreName = "score.txt";
-    resultName = ""; // message will be written into stderr if resultName is ""
 }
 
 void registerValidation() {
@@ -4326,18 +4337,18 @@ void registerTestlibCmd(int argc, char *argv[]) {
     ans.init(args[3], _answer);
      */
 
+    // For syzoj, we should write score into stdout
+    // and write message into stderr
+    appesMode = false;
+    scoreName = ""; // score will be written into stdout if scoreName is ""
+    resultName = ""; // message will be written into stderr if resultName is ""
+
     // For syzoj SPJ, we should read data input from file "input"
     // and read user output from file "user_out"
     // and read test data answer from file "answer"
     inf.init("input", _input);
     ouf.init("user_out", _output);
     ans.init("answer", _answer);
-
-    // For syzoj, we should write score into stdout
-    // and write message into stderr
-    appesMode = false;
-    scoreName = ""; // score will be written into stdout if scoreName is ""
-    resultName = ""; // message will be written into stderr if resultName is ""
 }
 
 void registerTestlib(int argc, ...) {
